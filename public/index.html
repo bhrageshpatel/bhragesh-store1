@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bhragesh Store</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container navbar">
+
+            <a href="/" class="logo">
+                🔧 Bhragesh Store
+            </a>
+
+            <nav>
+                <a href="/">Home</a>
+                <a href="#products">Products</a>
+                <a href="#categories">Categories</a>
+                <a href="/cart.html" class="cart-link">
+                     🛒 Cart <span id="cart-count">0</span>
+                </a>
+            </nav>
+
+        </div>
+    </header>
+
+
+    <!-- Simple Hero -->
+    <section class="hero">
+
+        <div class="container">
+
+            <h1>Electronics & DIY Components</h1>
+
+            <p>
+                Arduino boards, sensors, modules and robotics components
+                for your projects.
+            </p>
+
+            <a href="#products" class="shop-btn">
+                View Products
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- Categories -->
+    <section class="categories" id="categories">
+
+        <div class="container">
+
+            <h2>Categories</h2>
+
+            <div class="category-list">
+
+                <button>Arduino & Boards</button>
+                <button>Sensors</button>
+                <button>WiFi Modules</button>
+                <button>Bluetooth Modules</button>
+                <button>Motors</button>
+                <button>Robotics</button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Products -->
+    <section class="products" id="products">
+
+        <div class="container">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Electronic Components</h2>
+                    <p>Choose components for your next project.</p>
+                </div>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search product..."
+                >
+
+            </div>
+
+
+            <!--
+                Products will be loaded here from PostgreSQL
+                through Node.js API.
+            -->
+
+            <div id="products-container" class="product-grid">
+
+                <div class="loading">
+                    Loading products...
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+
+        <div class="container">
+
+            <h3>🔧 Bhragesh Store</h3>
+
+            <p>
+                Electronics & DIY Components
+            </p>
+
+            <p class="copyright">
+                © 2026 Bhragesh Store
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <script src="/js/script.js"></script>
+
+</body>
+</html>

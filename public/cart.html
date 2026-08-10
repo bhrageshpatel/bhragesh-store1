@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cart - Bhragesh Store</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <header class="navbar">
+
+        <div class="logo">
+            🔧 Bhragesh Store
+        </div>
+
+        <nav>
+            <a href="/">Home</a>
+            <a href="/#products">Products</a>
+            <a href="/#categories">Categories</a>
+
+            <a href="/cart.html" class="cart-link">
+                🛒 Cart <span id="cart-count">0</span>
+            </a>
+        </nav>
+
+    </header>
+
+
+    <!-- Cart Section -->
+    <main class="cart-page">
+
+        <h1>Your Shopping Cart</h1>
+
+        <p class="cart-subtitle">
+            Review your selected electronics components before checkout.
+        </p>
+
+
+        <!-- Cart Items -->
+        <div id="cart-items">
+
+            <!-- Products will be loaded using JavaScript -->
+
+        </div>
+
+
+        <!-- Empty Cart -->
+        <div id="empty-cart" class="empty-cart">
+
+            <h2>Your cart is empty</h2>
+
+            <p>
+                You haven't added any products yet.
+            </p>
+
+            <a href="/" class="continue-shopping">
+                Continue Shopping
+            </a>
+
+        </div>
+
+
+        <!-- Cart Summary -->
+        <div id="cart-summary" class="cart-summary">
+
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <strong id="cart-subtotal">₹0</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Shipping</span>
+                <strong>Free</strong>
+            </div>
+
+            <hr>
+
+            <div class="summary-total">
+                <span>Total</span>
+                <strong id="cart-total">₹0</strong>
+            </div>
+
+            <button id="checkout-btn" class="checkout-btn">
+                Proceed to Checkout
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer>
+
+        <p>
+            © 2026 Bhragesh Store. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+    <script src="/js/cart.js"></script>
+
+</body>
+
+</html>
