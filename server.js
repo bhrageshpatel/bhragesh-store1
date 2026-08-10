@@ -1,37 +1,179 @@
 require("dotenv").config();
-const express = require("express");
 
+const express = require("express");
 const path = require("path");
+const crypto = require("crypto");
 const { Pool } = require("pg");
 const Razorpay = require("razorpay");
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// =====================================
+// MIDDLEWARE
+// =====================================
+
 app.use(express.json());
-const crypto = require("crypto");
 app.use(express.urlencoded({ extended: true }));
 
-// PostgreSQL connection
+// =====================================
+// POSTGRESQL CONNECTION
+// =====================================
+
+// Render PostgreSQL
+// DATABASE_URL should contain your Render Internal Database URL
+
 const pool = new Pool({
-    user: "postgres",
-    host: "localhost",
-    database: "bhragesh_store",
-    password: "Apna@123123",
-    port: 5432
+    connectionString: process.env.DATABASE_URL,
+
+    // Required for Render PostgreSQL connection
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
+
+// Test database connection when server starts
+pool.connect()
+    .then((client) => {
+        console.log("✅ PostgreSQL connected successfully");
+        client.release();
+    })
+    .catch((error) => {
+        console.error("❌ PostgreSQL connection failed:", error.message);
+    });
+
+// =====================================
+// RAZORPAY
+// =====================================
+
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-// Serve frontend
+// =====================================
+// SERVE FRONTEND
+// =====================================
+
 app.use(express.static(path.join(__dirname, "public")));
 
-//payment verification
-app.post("/api/payment/verify", async (req, res) => {
+// =====================================
+// TEST DATABASE
+// =====================================
+
+app.get("/api/test-db", async (req, res) => {
+
     try {
+
+        const result = await pool.query("SELECT NOW()");
+
+        res.json({
+            success: true,
+            message: "PostgreSQL connected successfully",
+            time: result.rows[0].now
+        });
+
+    } catch (error) {
+
+        console.error("Database Test Error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Database connection failed",
+            error: error.message
+        });
+    }
+});
+
+// =====================================
+// GET PRODUCTS
+// =====================================
+
+app.get("/api/products", async (req, res) => {
+
+    try {
+
+        const result = await pool.query(`
+            SELECT
+                id,
+                name,
+                description,
+                price,
+                category,
+                image_url,
+                stock
+            FROM products
+            ORDER BY id ASC
+        `);
+
+        res.json(result.rows);
+
+    } catch (error) {
+
+        console.error("Products API Error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Unable to load products",
+            error: error.message
+        });
+    }
+});
+
+// =====================================
+// CREATE RAZORPAY ORDER
+// =====================================
+
+app.post("/api/payment/create-order", async (req, res) => {
+
+    try {
+
+        const { amount } = req.body;
+
+        if (!amount || Number(amount) <= 0) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Invalid payment amount"
+            });
+        }
+
+        const options = {
+            amount: Math.round(Number(amount) * 100),
+            currency: "INR",
+            receipt: `receipt_${Date.now()}`
+        };
+
+        const order = await razorpay.orders.create(options);
+
+        console.log("Razorpay Order Created:", order.id);
+
+        res.json({
+            success: true,
+            order: order
+        });
+
+    } catch (error) {
+
+        console.error("Razorpay Order Error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Unable to create Razorpay order",
+            error: error.message
+        });
+    }
+});
+
+// =====================================
+// PAYMENT VERIFICATION
+// =====================================
+
+app.post("/api/payment/verify", async (req, res) => {
+
+    try {
+
         const {
             razorpay_order_id,
             razorpay_payment_id,
@@ -41,24 +183,25 @@ app.post("/api/payment/verify", async (req, res) => {
             total_amount
         } = req.body;
 
-        // ===============================
-        // Check Required Data
-        // ===============================
+        // =====================================
+        // CHECK REQUIRED DATA
+        // =====================================
 
         if (
             !razorpay_order_id ||
             !razorpay_payment_id ||
             !razorpay_signature
         ) {
+
             return res.status(400).json({
                 success: false,
                 message: "Payment details are missing"
             });
         }
 
-        // ===============================
-        // Generate Signature
-        // ===============================
+        // =====================================
+        // GENERATE SIGNATURE
+        // =====================================
 
         const generatedSignature = crypto
             .createHmac(
@@ -72,20 +215,21 @@ app.post("/api/payment/verify", async (req, res) => {
             )
             .digest("hex");
 
-        // ===============================
-        // Verify Payment
-        // ===============================
+        // =====================================
+        // VERIFY PAYMENT
+        // =====================================
 
         if (generatedSignature !== razorpay_signature) {
+
             return res.status(400).json({
                 success: false,
                 message: "Payment verification failed"
             });
         }
 
-        // ===============================
-        // Save Order in PostgreSQL
-        // ===============================
+        // =====================================
+        // SAVE ORDER IN POSTGRESQL
+        // =====================================
 
         const result = await pool.query(
             `
@@ -126,11 +270,12 @@ app.post("/api/payment/verify", async (req, res) => {
             ]
         );
 
-        // ===============================
-        // Success Response
-        // ===============================
+        // =====================================
+        // SUCCESS RESPONSE
+        // =====================================
 
         return res.json({
+
             success: true,
 
             message: "Payment verified and order saved",
@@ -148,122 +293,14 @@ app.post("/api/payment/verify", async (req, res) => {
         );
 
         return res.status(500).json({
+
             success: false,
-            message: "Server error while saving order"
-        });
-    }
-});
-// =====================================
-// TEST DATABASE
-// =====================================
 
-app.get("/api/test-db", async (req, res) => {
+            message: "Server error while saving order",
 
-    try {
-
-        await pool.query("SELECT NOW()");
-
-        res.json({
-            success: true,
-            message: "PostgreSQL connected successfully",
-            time: new Date()
-        });
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.status(500).json({
-            success: false,
-            message: "Database connection failed"
-        });
-
-    }
-
-});
-
-
-// =====================================
-// GET PRODUCTS
-// =====================================
-
-app.get("/api/products", async (req, res) => {
-
-    try {
-
-        const result = await pool.query(`
-            SELECT
-                id,
-                name,
-                description,
-                price,
-                category,
-                image_url,
-                stock
-            FROM products
-            ORDER BY id ASC
-        `);
-
-        res.json(result.rows);
-
-    } catch (error) {
-
-        console.error("Products API Error:", error);
-
-        res.status(500).json({
-            success: false,
-            message: "Unable to load products"
-        });
-
-    }
-
-});
-// =====================================
-// CREATE RAZORPAY ORDER
-// =====================================
-
-app.post("/api/payment/create-order", async (req, res) => {
-
-    try {
-
-        const { amount } = req.body;
-
-        if (!amount || Number(amount) <= 0) {
-
-            return res.status(400).json({
-                success: false,
-                message: "Invalid payment amount"
-            });
-
-        }
-
-        const options = {
-            amount: Math.round(Number(amount) * 100),
-            currency: "INR",
-            receipt: `receipt_${Date.now()}`
-        };
-
-        const order = await razorpay.orders.create(options);
-
-        console.log("Razorpay Order Created:", order.id);
-
-        res.json({
-            success: true,
-            order: order
-        });
-
-    } catch (error) {
-
-        console.error("Razorpay Order Error:", error);
-
-        res.status(500).json({
-            success: false,
-            message: "Unable to create Razorpay order",
             error: error.message
         });
-
     }
-
 });
 
 // =====================================
@@ -273,7 +310,7 @@ app.post("/api/payment/create-order", async (req, res) => {
 app.listen(PORT, () => {
 
     console.log(
-        `Bhragesh Store running on port ${PORT}`
+        `🚀 Bhragesh Store running on port ${PORT}`
     );
 
 });
