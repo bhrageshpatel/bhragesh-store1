@@ -1,3 +1,4 @@
+const cors = require("cors");
 require("dotenv").config();
 
 const express = require("express");
@@ -14,15 +15,13 @@ const PORT = process.env.PORT || 3000;
 // MIDDLEWARE
 // =====================================
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // =====================================
 // POSTGRESQL CONNECTION
 // =====================================
-
-// Render PostgreSQL
-// DATABASE_URL should contain your Render Internal Database URL
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -40,7 +39,10 @@ pool.connect()
         client.release();
     })
     .catch((error) => {
-        console.error("❌ PostgreSQL connection failed:", error.message);
+        console.error(
+            "❌ PostgreSQL connection failed:",
+            error.message
+        );
     });
 
 // =====================================
@@ -53,9 +55,19 @@ const razorpay = new Razorpay({
 });
 
 // =====================================
-// SERVE FRONTEND
+// SERVE REACT / VITE FRONTEND
 // =====================================
 
+const reactDistPath = path.join(
+    __dirname,
+    "bhragesh-store-react",
+    "dist"
+);
+
+// Serve new React/Vite production frontend
+app.use(express.static(reactDistPath));
+
+// Keep existing public assets available if needed
 app.use(express.static(path.join(__dirname, "public")));
 
 // =====================================
@@ -63,9 +75,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // =====================================
 
 app.get("/api/test-db", async (req, res) => {
-
     try {
-
         const result = await pool.query("SELECT NOW()");
 
         res.json({
@@ -73,9 +83,7 @@ app.get("/api/test-db", async (req, res) => {
             message: "PostgreSQL connected successfully",
             time: result.rows[0].now
         });
-
     } catch (error) {
-
         console.error("Database Test Error:", error);
 
         res.status(500).json({
@@ -91,9 +99,7 @@ app.get("/api/test-db", async (req, res) => {
 // =====================================
 
 app.get("/api/products", async (req, res) => {
-
     try {
-
         const result = await pool.query(`
             SELECT
                 id,
@@ -108,9 +114,7 @@ app.get("/api/products", async (req, res) => {
         `);
 
         res.json(result.rows);
-
     } catch (error) {
-
         console.error("Products API Error:", error);
 
         res.status(500).json({
@@ -126,13 +130,10 @@ app.get("/api/products", async (req, res) => {
 // =====================================
 
 app.post("/api/payment/create-order", async (req, res) => {
-
     try {
-
         const { amount } = req.body;
 
         if (!amount || Number(amount) <= 0) {
-
             return res.status(400).json({
                 success: false,
                 message: "Invalid payment amount"
@@ -147,16 +148,20 @@ app.post("/api/payment/create-order", async (req, res) => {
 
         const order = await razorpay.orders.create(options);
 
-        console.log("Razorpay Order Created:", order.id);
+        console.log(
+            "Razorpay Order Created:",
+            order.id
+        );
 
         res.json({
             success: true,
             order: order
         });
-
     } catch (error) {
-
-        console.error("Razorpay Order Error:", error);
+        console.error(
+            "Razorpay Order Error:",
+            error
+        );
 
         res.status(500).json({
             success: false,
@@ -171,9 +176,7 @@ app.post("/api/payment/create-order", async (req, res) => {
 // =====================================
 
 app.post("/api/payment/verify", async (req, res) => {
-
     try {
-
         const {
             razorpay_order_id,
             razorpay_payment_id,
@@ -192,7 +195,6 @@ app.post("/api/payment/verify", async (req, res) => {
             !razorpay_payment_id ||
             !razorpay_signature
         ) {
-
             return res.status(400).json({
                 success: false,
                 message: "Payment details are missing"
@@ -219,8 +221,10 @@ app.post("/api/payment/verify", async (req, res) => {
         // VERIFY PAYMENT
         // =====================================
 
-        if (generatedSignature !== razorpay_signature) {
-
+        if (
+            generatedSignature !==
+            razorpay_signature
+        ) {
             return res.status(400).json({
                 success: false,
                 message: "Payment verification failed"
@@ -275,32 +279,48 @@ app.post("/api/payment/verify", async (req, res) => {
         // =====================================
 
         return res.json({
-
             success: true,
-
-            message: "Payment verified and order saved",
-
+            message:
+                "Payment verified and order saved",
             order_id: result.rows[0].id,
-
             payment_id: razorpay_payment_id
         });
-
     } catch (error) {
-
         console.error(
             "Payment verification error:",
             error
         );
 
         return res.status(500).json({
-
             success: false,
-
-            message: "Server error while saving order",
-
+            message:
+                "Server error while saving order",
             error: error.message
         });
     }
+});
+
+// =====================================
+// REACT SPA FALLBACK
+// =====================================
+
+app.use((req, res, next) => {
+    if (req.method !== "GET") {
+        return next();
+    }
+
+    // Never send API requests to React
+    if (req.path.startsWith("/api/")) {
+        return next();
+    }
+
+    // React/Vite SPA entry point
+    res.sendFile(
+        path.join(
+            reactDistPath,
+            "index.html"
+        )
+    );
 });
 
 // =====================================
@@ -308,9 +328,7 @@ app.post("/api/payment/verify", async (req, res) => {
 // =====================================
 
 app.listen(PORT, () => {
-
     console.log(
         `🚀 Bhragesh Store running on port ${PORT}`
     );
-
 });

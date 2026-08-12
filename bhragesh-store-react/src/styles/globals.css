@@ -1,0 +1,156 @@
+/* ==========================
+   Google Font
+========================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+
+/* ==========================
+   Theme Variables
+========================== */
+
+:root {
+
+  /* Background */
+
+  --bg-primary: #060b16;
+  --bg-secondary: #0b1222;
+  --bg-card: rgba(20, 28, 48, 0.75);
+
+  /* Text */
+
+  --text-primary: #ffffff;
+  --text-secondary: #aeb8d0;
+  --text-muted: #6d7894;
+
+  /* Accent */
+
+  --primary: #00d9ff;
+  --primary-dark: #008cff;
+  --secondary: #7b61ff;
+
+  /* Border */
+
+  --border: rgba(255,255,255,.08);
+
+  /* Shadow */
+
+  --shadow:
+
+      0 20px 60px rgba(0,0,0,.45);
+
+  /* Radius */
+
+  --radius:18px;
+
+  /* Layout */
+
+  --container:1400px;
+
+}
+
+/* ==========================
+   Reset
+========================== */
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    font-family:"Space Grotesk",sans-serif;
+
+    background:var(--bg-primary);
+
+    color:var(--text-primary);
+
+    overflow-x:hidden;
+
+}
+
+/* ==========================
+   Container
+========================== */
+
+.container{
+
+    width:min(92%,var(--container));
+
+    margin:auto;
+
+}
+
+/* ==========================
+   Links
+========================== */
+
+a{
+
+    color:inherit;
+
+    text-decoration:none;
+
+}
+
+/* ==========================
+   Images
+========================== */
+
+img{
+
+    width:100%;
+
+    display:block;
+
+}
+
+/* ==========================
+   Buttons
+========================== */
+
+.btn{
+
+    padding:16px 34px;
+
+    border-radius:12px;
+
+    background:linear-gradient(
+        90deg,
+        var(--primary),
+        var(--primary-dark)
+    );
+
+    color:white;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:600;
+
+    transition:.35s;
+
+}
+
+.btn:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+    0 0 30px rgba(0,217,255,.45);
+
+}

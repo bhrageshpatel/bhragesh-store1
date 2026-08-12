@@ -1,0 +1,182 @@
+.navbar {
+  width: 100%;
+  background: #050a14;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-container {
+  width: 100%;
+  min-height: 90px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 30px;
+  box-sizing: border-box;
+}
+
+/* =========================
+   LOGO
+========================= */
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  color: #ffffff;
+  text-decoration: none;
+
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.logo-icon {
+  color: #ff8a00;
+  font-size: 35px;
+  line-height: 1;
+}
+
+/* =========================
+   MENU
+========================= */
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 42px;
+}
+
+.nav-link {
+  color: #aeb8cf;
+  text-decoration: none;
+
+  font-size: 18px;
+  font-weight: 600;
+
+  transition: 0.25s ease;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+}
+
+.nav-link.active {
+  color: #ffffff;
+}
+
+/* =========================
+   CART
+========================= */
+
+.navbar-cart {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: #12c3e8;
+  color: #031018;
+
+  padding: 15px 25px;
+  border-radius: 15px;
+
+  text-decoration: none;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  transition: 0.25s ease;
+}
+
+.navbar-cart:hover {
+  background: #21d5fa;
+  transform: translateY(-2px);
+}
+
+.cart-icon {
+  font-size: 20px;
+}
+
+.cart-badge {
+  position: absolute;
+
+  top: -9px;
+  right: -8px;
+
+  min-width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ff2028;
+  color: white;
+
+  border-radius: 50%;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  padding: 0 6px;
+  box-sizing: border-box;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+
+  .navbar-container {
+    padding: 15px 20px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .navbar-menu {
+    order: 3;
+    width: 100%;
+
+    justify-content: center;
+
+    gap: 22px;
+    flex-wrap: wrap;
+  }
+
+  .navbar-logo {
+    font-size: 22px;
+  }
+
+  .navbar-cart {
+    padding: 12px 18px;
+  }
+
+}
+
+@media (max-width: 550px) {
+
+  .navbar-menu {
+    gap: 15px;
+  }
+
+  .nav-link {
+    font-size: 15px;
+  }
+
+  .navbar-logo {
+    font-size: 20px;
+  }
+
+  .logo-icon {
+    font-size: 26px;
+  }
+
+}

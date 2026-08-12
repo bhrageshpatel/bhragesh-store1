@@ -1,0 +1,136 @@
+.about-page {
+  min-height: 75vh;
+  padding: 90px 30px;
+  background: #050a14;
+  color: #ffffff;
+}
+
+.about-container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Hero */
+
+.about-hero {
+  max-width: 850px;
+  margin-bottom: 70px;
+}
+
+.about-tag {
+  display: inline-block;
+
+  padding: 8px 15px;
+  margin-bottom: 20px;
+
+  border-radius: 30px;
+
+  background: rgba(18, 195, 232, 0.12);
+  color: #12c3e8;
+
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.about-hero h1 {
+  margin: 0 0 20px;
+
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: 1.05;
+}
+
+.about-hero h1 span {
+  color: #12c3e8;
+}
+
+.about-hero p {
+  color: #aeb8cf;
+
+  font-size: 20px;
+  line-height: 1.7;
+}
+
+/* Cards */
+
+.about-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 25px;
+}
+
+.about-card {
+  background: #101827;
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+
+  border-radius: 20px;
+
+  padding: 32px;
+
+  transition: 0.3s ease;
+}
+
+.about-card:hover {
+  transform: translateY(-7px);
+  border-color: rgba(18, 195, 232, 0.4);
+}
+
+.about-icon {
+  font-size: 35px;
+  margin-bottom: 20px;
+}
+
+.about-card h2 {
+  margin-bottom: 12px;
+}
+
+.about-card p {
+  color: #9ca8bf;
+  line-height: 1.7;
+}
+
+/* Owner */
+
+.about-owner {
+  margin-top: 50px;
+
+  padding: 40px;
+
+  border-radius: 20px;
+
+  background: #0c1423;
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.about-owner h2 {
+  font-size: 30px;
+  margin-bottom: 15px;
+}
+
+.about-owner p {
+  color: #aeb8cf;
+  line-height: 1.8;
+  font-size: 17px;
+}
+
+.about-owner strong {
+  color: #12c3e8;
+}
+
+/* Responsive */
+
+@media (max-width: 800px) {
+
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-page {
+    padding: 60px 20px;
+  }
+
+}

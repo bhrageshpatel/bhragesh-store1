@@ -1,15 +1,15 @@
 import * as THREE from "three";
 
-export function createCamera() {
+export function createCamera(container) {
 
     const camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
+        60,
+        container.clientWidth / container.clientHeight,
         0.1,
-        1000
+        100
     );
 
-    camera.position.z = 5;
+    camera.position.set(0, 0, 5);
 
     return camera;
 }
